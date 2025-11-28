@@ -1,0 +1,494 @@
+
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>code_2025-11-28T11-01-03-713Z.html</title>
+                </head>
+                <body>
+                    <!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחולל מודעות שבת - טל חיים</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; padding: 20px; max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; color: #2c3e50; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 15px; display: flex; align-items: center; flex-wrap: wrap; }
+        .input-group label { flex: 1; min-width: 200px; font-weight: 600; }
+        .input-group input, .input-group select, .input-group textarea { flex: 1; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 16px; }
+        .section-title { background-color: #e9ecef; padding: 10px; margin-top: 20px; margin-bottom: 15px; border-radius: 5px; font-weight: bold; color: #495057; border-right: 5px solid #007bff; }
+        
+        /* עיצוב כפתורים */
+        .buttons-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        button.action-btn { flex: 1; padding: 15px; border: none; border-radius: 5px; font-size: 16px; font-weight:bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; color: white; min-width: 150px; }
+        button.action-btn:active { transform: scale(0.98); }
+        
+        .btn-whatsapp-text { background-color: #28a745; } /* ירוק רגיל */
+        .btn-share-all { background-color: #128C7E; border: 2px solid #075E54; } /* ירוק ווצאפ רשמי כהה */
+        .btn-print { background-color: #fd7e14; }
+        .btn-image { background-color: #000000; }
+        .btn-download { background-color: #007bff; width: 100%; margin-top: 10px; }
+        
+        .template-actions { background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; justify-content: center; }
+        .btn-save-template { background-color: #17a2b8; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; flex: 1; }
+        .btn-clear { background-color: #6c757d; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; flex: 0.3; }
+        
+        #generated-image-container { margin-top: 30px; text-align: center; display: none; }
+        #generated-image-container img { max-width: 100%; height: auto; border-radius: 8px; border: 3px solid #5c3a21; }
+        #hiddenCanvas { display: none; }
+        #imageStatus { font-weight: bold; margin-bottom: 10px; color: #0056b3; }
+        
+        #text-output-area { display: none; margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px; }
+        #output-title { margin-top: 0; }
+        
+        textarea#text-result { width: 100%; height: 200px; font-family: monospace; display:block; }
+        
+        #print-result { 
+            background: white; 
+            padding: 20px; 
+            border: 1px solid #ccc; 
+            min-height: 200px; 
+            text-align: center; 
+            font-family: 'David', 'Arial', sans-serif;
+            font-size: 18px;
+            white-space: pre-wrap;
+            direction: rtl;
+            display: none;
+        }
+
+        .copy-btn { background-color: #007bff; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; }
+        
+        .slider-container { background-color: #fff3cd; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 20px;}
+        input[type=range] { width: 80%; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>מחולל מודעות שבת - טל חיים</h1>
+    
+    <div style="text-align:center; margin-bottom: 20px; padding: 10px; background: #e3f2fd; border-radius: 8px;">
+        <p id="imageStatus">טוען תמונת רקע מהענן...</p>
+        <input type="file" id="bgImageInput" accept="image/png, image/jpeg" style="display:none; margin-top:5px;"> 
+        <button onclick="document.getElementById('bgImageInput').style.display='inline-block'" style="background:none; border:none; text-decoration:underline; color:#666; font-size:12px; cursor:pointer;">(העלאה ידנית במקרה של תקלה)</button>
+    </div>
+
+    <div class="slider-container">
+        <label>גודל טקסט בתמונה:</label><br>
+        <input type="range" id="fontSizeSlider" min="20" max="50" value="32">
+    </div>
+
+    <div class="template-actions">
+        <button class="btn-save-template" onclick="saveFormData()">💾 שמור נתונים קבועים</button>
+        <button class="btn-clear" onclick="clearFormData()">🗑️ נקה</button>
+    </div>
+
+    <div class="input-group">
+        <label>בחר פרשה:</label>
+        <select id="parasha">
+            <option value="" selected>ללא / ידני</option>
+            <optgroup label="בראשית"><option>בראשית</option><option>נח</option><option>לך לך</option><option>וירא</option><option>חיי שרה</option><option>תולדות</option><option>ויצא</option><option>וישלח</option><option>וישב</option><option>מקץ</option><option>ויגש</option><option>ויחי</option></optgroup>
+            <optgroup label="שמות"><option>שמות</option><option>וארא</option><option>בא</option><option>בשלח</option><option>יתרו</option><option>משפטים</option><option>תרומה</option><option>תצוה</option><option>כי תשא</option><option>ויקהל</option><option>פקודי</option></optgroup>
+            <optgroup label="ויקרא"><option>ויקרא</option><option>צו</option><option>שמיני</option><option>תזריע</option><option>מצורע</option><option>אחרי מות</option><option>קדושים</option><option>אמור</option><option>בהר</option><option>בחוקותי</option></optgroup>
+            <optgroup label="במדבר"><option>במדבר</option><option>נשא</option><option>בהעלותך</option><option>שלח</option><option>קורח</option><option>חוקת</option><option>בלק</option><option>פנחס</option><option>מטות</option><option>מסעי</option></optgroup>
+            <optgroup label="דברים"><option>דברים</option><option>ואתחנן</option><option>עקב</option><option>ראה</option><option>שופטים</option><option>כי תצא</option><option>כי תבוא</option><option>נצבים</option><option>וילך</option><option>האזינו</option><option>וזאת הברכה</option></optgroup>
+            <optgroup label="חגים"><option>ראש השנה</option><option>יום כיפור</option><option>סוכות</option><option>שמחת תורה</option><option>חנוכה</option><option>פורים</option><option>פסח</option><option>שבועות</option><option>יום העצמאות</option></optgroup>
+        </select>
+    </div>
+    <div class="input-group"><label>או הקלד ידנית:</label><input type="text" id="custom_parasha"></div>
+
+    <div class="section-title">זמנים</div>
+    <div class="input-group"><label>כניסת השבת:</label><input type="tel" id="time_knisa" class="time-input"></div>
+    <div class="input-group"><label>צאת השבת:</label><input type="tel" id="time_tzeit" class="time-input"></div>
+    
+    <div class="section-title">ערב שבת</div>
+    <div class="input-group"><label>מנחה ערב שבת:</label><input type="tel" id="time_mincha_eve" class="time-input"></div>
+    <div class="input-group"><label>קבלת שבת וערבית:</label><input type="tel" id="time_kabalat" class="time-input"></div>
+    <div class="input-group"><label>הודעה מיוחדת:</label><textarea id="special_eve" style="height:50px"></textarea></div>
+
+    <div class="section-title">בוקר שבת</div>
+    <div class="input-group"><label>שחרית (קורבנות):</label><input type="tel" id="time_shacharit" class="time-input"></div>
+    <div class="input-group"><label>הודו:</label><input type="tel" id="time_hodu" class="time-input"></div>
+    <div class="input-group"><label>תפילת ילדים:</label><input type="text" id="text_kids" value="תפילת ילדים לאחר מוסף."></div>
+    <div class="input-group"><label>הודעה מיוחדת:</label><textarea id="special_morning" style="height:50px"></textarea></div>
+
+    <div class="section-title">צהריים</div>
+    <div class="input-group"><label>תהילים לילדים:</label><input type="tel" id="time_psalms" class="time-input"></div>
+    <div class="input-group"><label>שיעור לפני מנחה:</label><input type="tel" id="time_class_mincha" class="time-input"></div>
+    <div class="input-group"><label>מנחה של שבת:</label><input type="tel" id="time_mincha_day" class="time-input"></div>
+    <div class="input-group"><label>שיעור לנשים:</label><input type="tel" id="time_women" class="time-input"></div>
+    <div class="input-group"><label>שיעור לפני ערבית:</label><input type="tel" id="time_class_arvit" class="time-input"></div>
+    <div class="input-group"><label>ערבית מוצ"ש:</label><input type="tel" id="time_arvit_motzash" class="time-input"></div>
+
+    <div class="section-title">ימות השבוע</div>
+    <div class="input-group"><label>שחרית (שישי):</label><input type="tel" id="time_week_shacharit" value="08:15" class="time-input"></div>
+    <div class="input-group"><label>ערבית (חול):</label><input type="tel" id="time_week_arvit" value="20:15" class="time-input"></div>
+
+    <div class="buttons-container">
+        <button class="action-btn btn-share-all" onclick="shareToWhatsapp()">🚀 שליחה לווצאפ (תמונה + טקסט)</button>
+        
+        <button class="action-btn btn-whatsapp-text" onclick="generateText('whatsapp')">הכן טקסט לוואטסאפ</button>
+        <button class="action-btn btn-print" onclick="generateText('print')">טקסט להדפסה</button>
+        <button class="action-btn btn-image" onclick="generateImage()">צור תמונה להורדה</button>
+    </div>
+
+    <div id="text-output-area">
+        <h3 id="output-title">הודעה מוכנה:</h3>
+        <textarea id="text-result"></textarea>
+        <div id="print-result" contenteditable="true"></div>
+        <button class="copy-btn" onclick="copyToClipboard()">📋 העתק ללוח</button>
+    </div>
+
+    <div id="generated-image-container">
+        <h3>התמונה המוכנה:</h3>
+        <img id="finalImage">
+        <button class="action-btn btn-download" onclick="downloadImage()">📥 הורד תמונה למכשיר</button>
+    </div>
+</div>
+
+<canvas id="hiddenCanvas"></canvas>
+
+<script>
+    let loadedBgImage = null;
+    let currentMode = 'whatsapp'; 
+    const canvas = document.getElementById('hiddenCanvas');
+    const ctx = canvas.getContext('2d');
+    const imageStatus = document.getElementById('imageStatus');
+
+    window.onload = function() {
+        const img = new Image();
+        img.src = 'https://raw.githubusercontent.com/Yossi65/synagogue/main/background.png'; 
+        img.crossOrigin = "Anonymous"; 
+        
+        img.onload = function() {
+            loadedBgImage = img;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            imageStatus.innerText = "✅ תמונת רקע נטענה בהצלחה מהענן!";
+            imageStatus.style.color = "green";
+            document.getElementById('bgImageInput').style.display = 'none';
+        };
+
+        img.onerror = function() {
+            imageStatus.innerText = "⚠️ שגיאה בטעינה. נסה לרענן או להעלות ידנית.";
+            imageStatus.style.color = "red";
+        };
+
+        const savedData = localStorage.getItem('shabbatFormData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            for (const key in data) {
+                const el = document.getElementById(key);
+                if (el) el.value = data[key];
+            }
+        }
+    };
+
+    document.getElementById('bgImageInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                loadedBgImage = img;
+                canvas.width = img.width;
+                canvas.height = img.height;
+                imageStatus.innerText = "✅ תמונה הועלתה ידנית";
+                imageStatus.style.color = "green";
+            }
+            img.src = event.target.result;
+        }
+        reader.readAsDataURL(file);
+    });
+
+    document.querySelectorAll('.time-input').forEach(input => {
+        input.addEventListener('blur', function() {
+            let val = this.value.replace(/[^0-9]/g, '');
+            if (val.length === 0) return;
+            if (val.length === 1) val = "0" + val + ":00";
+            else if (val.length === 2) val = val + ":00";
+            else if (val.length === 3) val = "0" + val.substring(0,1) + ":" + val.substring(1);
+            else if (val.length >= 4) val = val.substring(0, 2) + ":" + val.substring(2, 4);
+            this.value = val;
+        });
+    });
+
+    function saveFormData() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
+        const data = {};
+        inputs.forEach(input => {
+            if(input.id !== 'fontSizeSlider') data[input.id] = input.value;
+        });
+        localStorage.setItem('shabbatFormData', JSON.stringify(data));
+        alert('הנתונים נשמרו!');
+    }
+
+    function clearFormData() {
+        if(confirm("לנקות הכל?")) {
+            document.querySelectorAll('input[type="text"], input[type="tel"], textarea').forEach(i => i.value = '');
+            document.getElementById('parasha').value = '';
+        }
+    }
+
+    function getFormData() {
+        const listParasha = document.getElementById('parasha').value;
+        const customParasha = document.getElementById('custom_parasha').value;
+        let finalParashaName = customParasha.trim() !== "" ? customParasha : listParasha;
+        
+        const data = { parasha: finalParashaName };
+        const ids = ['time_knisa', 'time_tzeit', 'time_mincha_eve', 'time_kabalat', 'special_eve', 
+                     'time_shacharit', 'time_hodu', 'text_kids', 'special_morning', 'time_psalms', 
+                     'time_class_mincha', 'time_mincha_day', 'time_women', 'time_class_arvit', 
+                     'time_arvit_motzash', 'time_week_shacharit', 'time_week_arvit'];
+        ids.forEach(id => data[id] = document.getElementById(id).value);
+        return data;
+    }
+
+    // --- הפונקציה המשודרגת לשיתוף ---
+    async function shareToWhatsapp() {
+        if (!loadedBgImage) { alert("אין תמונת רקע!"); return; }
+        
+        // 1. מייצרים תמונה (ברקע)
+        generateImage(true); 
+
+        // 2. מכינים טקסט
+        const whatsappText = buildTextString(true);
+
+        // 3. יוצרים קובץ ושולחים
+        canvas.toBlob(async (blob) => {
+            if (!blob) return;
+            const file = new File([blob], "shabbat_times.jpg", { type: "image/jpeg" });
+            
+            // מנגנון ביטוח: העתקה לזיכרון לפני השיתוף
+            try {
+                // משתמשים ב-textarea נסתר להעתקה בטוחה (עובד יותר טוב במובייל)
+                const tempInput = document.createElement("textarea");
+                tempInput.value = whatsappText;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                
+                // הודעה קופצת למשתמש
+                alert("הטקסט הועתק לזיכרון!\n\nאם הוא לא מופיע אוטומטית מתחת לתמונה - עשה 'הדבק' (Paste).");
+            } catch (err) {
+                console.log("Copy failed", err);
+            }
+
+            // 4. שליחה
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        text: whatsappText, 
+                        title: 'זמני שבת - טל חיים'
+                    });
+                } catch (error) {
+                    console.log('Share error:', error);
+                }
+            } else {
+                alert("הדפדפן הזה לא תומך בשיתוף תמונה ישיר.\nיש להוריד את התמונה ולהעתיק את הטקסט.");
+                generateText('whatsapp');
+            }
+        }, 'image/jpeg', 0.9);
+    }
+
+    function buildTextString(isWhatsapp) {
+        const data = getFormData();
+        const fmt = (text) => (isWhatsapp && text) ? `*${text}*` : (text || '');
+        
+        let msg = `${fmt("זמני תפילות ביהכנ\"ס טל-חיים - פרשת " + data.parasha)}\n\n`;
+        
+        let timesLine = "";
+        if(data.time_knisa) timesLine += `כניסת השבת: ${data.time_knisa}`;
+        if(data.time_knisa && data.time_tzeit) timesLine += `  |  `;
+        if(data.time_tzeit) timesLine += `צאת השבת: ${data.time_tzeit}`;
+        
+        if(timesLine) msg += `${fmt(timesLine)}\n\n`;
+
+        if(data.time_mincha_eve) msg += `מנחה ערב שבת (אשרי) - ${fmt(data.time_mincha_eve)}\n`;
+        if(data.time_kabalat) msg += `קבלת שבת וערבית - ${fmt(data.time_kabalat)}\n`;
+        if(data.special_eve) msg += `${fmt(data.special_eve)}\n`;
+        
+        msg += `\n`;
+        if(data.time_shacharit) msg += `שחרית (קורבנות) - ${fmt(data.time_shacharit)}\n`;
+        if(data.time_hodu) msg += `הודו - ${fmt(data.time_hodu)}\n`;
+        if(data.text_kids) msg += `${data.text_kids}\n`;
+        if(data.special_morning) msg += `${fmt(data.special_morning)}\n`;
+        
+        msg += `\n`;
+        if(data.time_psalms) msg += `תהילים לילדים - ${fmt(data.time_psalms)}\n`;
+        if(data.time_class_mincha) msg += `שיעור לפני מנחה - ${fmt(data.time_class_mincha)}\n`;
+        if(data.time_mincha_day) msg += `מנחה של שבת - ${fmt(data.time_mincha_day)}\n`;
+        if(data.time_women) msg += `שיעור לנשים - ${fmt(data.time_women)}\n`;
+        if(data.time_class_arvit) msg += `שיעור לפני ערבית - ${fmt(data.time_class_arvit)}\n`;
+        if(data.time_arvit_motzash) msg += `ערבית מוצ"ש - ${fmt(data.time_arvit_motzash)}\n`;
+
+        msg += `\n${fmt("תפילות בשאר ימות השבוע:")}\n`;
+        msg += `שחרית (שישי) - ${fmt(data.time_week_shacharit)}, ערבית - ${fmt(data.time_week_arvit)}\n`;
+        
+        msg += `\n${fmt("שבת שלום")}\n`;
+        return msg;
+    }
+
+    function generateText(mode) {
+        currentMode = mode;
+        const msg = buildTextString(mode === 'whatsapp');
+
+        const textarea = document.getElementById('text-result');
+        const printDiv = document.getElementById('print-result');
+        const title = document.getElementById('output-title');
+
+        if (mode === 'whatsapp') {
+            title.innerText = "הודעה לוואטסאפ:";
+            textarea.style.display = 'block';
+            printDiv.style.display = 'none';
+            textarea.value = msg;
+        } else {
+            title.innerText = "טקסט להדפסה (העתק והדבק לוורד):";
+            textarea.style.display = 'none';
+            printDiv.style.display = 'block';
+            printDiv.innerText = msg; 
+        }
+
+        document.getElementById('text-output-area').style.display = 'block';
+        document.getElementById('generated-image-container').style.display = 'none';
+        document.getElementById('text-output-area').scrollIntoView({behavior: "smooth"});
+    }
+
+    function copyToClipboard() {
+        if (currentMode === 'print') {
+             const range = document.createRange();
+             range.selectNode(document.getElementById("print-result"));
+             window.getSelection().removeAllRanges();
+             window.getSelection().addRange(range);
+             document.execCommand("copy");
+             window.getSelection().removeAllRanges();
+             alert("הטקסט הועתק! הדבק בוורד.");
+        } else {
+            const txt = document.getElementById("text-result");
+            txt.select();
+            document.execCommand('copy');
+            alert("הועתק!");
+        }
+    }
+
+    function generateImage(silentMode = false) {
+        if (!loadedBgImage) { if(!silentMode) alert("אין תמונת רקע!"); return; }
+        const data = getFormData();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(loadedBgImage, 0, 0);
+        
+        ctx.textAlign = 'center'; 
+        ctx.fillStyle = '#000000'; 
+        const centerX = canvas.width / 2;
+        const fontMultiplier = document.getElementById('fontSizeSlider').value / 1000;
+        const fontSize = canvas.height * fontMultiplier;
+        const lineHeight = fontSize * 1.3; 
+
+        // 1. שם הפרשה
+        let headerY = canvas.height * 0.17; 
+        ctx.font = 'bold ' + (fontSize * 1.3) + 'px "David", "Frank Ruhl Libre", serif';
+        ctx.fillText(`פרשת ${data.parasha}`, centerX, headerY);
+
+        // 2. כניסת/צאת שבת
+        let currentY = canvas.height * 0.26; 
+        ctx.font = 'bold ' + (fontSize * 0.85) + 'px "David", "Frank Ruhl Libre", serif';
+
+        let timesStr = "";
+        if(data.time_knisa) timesStr += `כניסת השבת: ${data.time_knisa}`;
+        if(data.time_knisa && data.time_tzeit) timesStr += `  |  `;
+        if(data.time_tzeit) timesStr += `צאת השבת: ${data.time_tzeit}`;
+        
+        if (timesStr) {
+            ctx.fillText(timesStr, centerX, currentY);
+            currentY += lineHeight * 1.2; 
+        }
+
+        // 3. רשימת התפילות
+        ctx.font = 'bold ' + fontSize + 'px "David", "Frank Ruhl Libre", serif';
+
+        function draw(txt) {
+            if (currentY > canvas.height * 0.82) return; 
+            if (txt && txt.trim()) { 
+                ctx.fillText(txt, centerX, currentY); 
+                currentY += lineHeight; 
+            }
+        }
+
+        draw(data.time_mincha_eve ? `מנחה ערב שבת (אשרי) - ${data.time_mincha_eve}` : '');
+        draw(data.time_kabalat ? `קבלת שבת וערבית - ${data.time_kabalat}` : '');
+        
+        if(data.special_eve) {
+             currentY += lineHeight * 0.2;
+             draw(data.special_eve);
+             currentY += lineHeight * 0.2;
+        }
+
+        if (currentY < canvas.height * 0.7) currentY += lineHeight * 0.3;
+        
+        draw(data.time_shacharit ? `שחרית (קורבנות) - ${data.time_shacharit}` : '');
+        draw(data.time_hodu ? `הודו - ${data.time_hodu}` : '');
+        draw(data.text_kids);
+        if(data.special_morning) {
+             currentY += lineHeight * 0.2;
+             draw(data.special_morning);
+             currentY += lineHeight * 0.2;
+        }
+
+        if (currentY < canvas.height * 0.7) currentY += lineHeight * 0.3;
+
+        draw(data.time_psalms ? `תהילים לילדים - ${data.time_psalms}` : '');
+        draw(data.time_class_mincha ? `שיעור לפני מנחה - ${data.time_class_mincha}` : '');
+        draw(data.time_mincha_day ? `מנחה של שבת - ${data.time_mincha_day}` : '');
+        draw(data.time_women ? `שיעור לנשים - ${data.time_women}` : '');
+        draw(data.time_class_arvit ? `שיעור לפני ערבית - ${data.time_class_arvit}` : '');
+        draw(data.time_arvit_motzash ? `ערבית מוצ"ש - ${data.time_arvit_motzash}` : '');
+
+        // 4. תפילות חול
+        let bottomY = canvas.height * 0.835; 
+        ctx.font = 'bold ' + (fontSize * 0.85) + 'px "David", "Frank Ruhl Libre", serif';
+        
+        ctx.fillText("תפילות בשאר ימות השבוע:", centerX, bottomY);
+        bottomY += lineHeight;
+        
+        let weekTimes = "";
+        if(data.time_week_shacharit) weekTimes += `שחרית (שישי) - ${data.time_week_shacharit}`;
+        if(data.time_week_shacharit && data.time_week_arvit) weekTimes += `, `;
+        if(data.time_week_arvit) weekTimes += `ערבית - ${data.time_week_arvit}`;
+        ctx.fillText(weekTimes, centerX, bottomY);
+
+        // 5. שבת שלום
+        ctx.font = 'bold ' + (fontSize * 1.3) + 'px serif';
+        ctx.fillText("שבת שלום", centerX, canvas.height * 0.915); 
+
+
+        document.getElementById('finalImage').src = canvas.toDataURL('image/jpeg', 0.9);
+        if (!silentMode) {
+            document.getElementById('generated-image-container').style.display = 'block';
+            document.getElementById('text-output-area').style.display = 'none';
+            document.getElementById('generated-image-container').scrollIntoView({behavior: "smooth"});
+        }
+    }
+
+    function downloadImage() {
+        const link = document.createElement('a');
+        const data = getFormData();
+        const fileName = `זמני_שבת_פרשת_${data.parasha.replace(/\s+/g, '_')}.jpg`;
+        
+        link.download = fileName;
+        link.href = document.getElementById('finalImage').src;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+</body>
+</html>
+                </body>
+                </html>
+            
