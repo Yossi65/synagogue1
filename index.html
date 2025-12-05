@@ -10,7 +10,16 @@
         .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .input-group { margin-bottom: 15px; display: flex; align-items: center; flex-wrap: wrap; }
         .input-group label { flex: 1; min-width: 200px; font-weight: 600; }
-        .input-group input, .input-group select, .input-group textarea { flex: 1; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 16px; }
+        .input-group input[type="text"], 
+        .input-group input[type="tel"], 
+        .input-group select, 
+        .input-group textarea { flex: 1; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 16px; }
+        
+        /* עיצוב מיוחד לתיבת הסימון של הקידוש */
+        .checkbox-group { background-color: #fff3cd; padding: 10px; border-radius: 5px; border: 1px solid #ffeeba; }
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; margin-left: 10px; cursor: pointer; }
+        .checkbox-group label { cursor: pointer; flex: 0 0 auto; margin-left: 10px; }
+
         .section-title { background-color: #e9ecef; padding: 10px; margin-top: 20px; margin-bottom: 15px; border-radius: 5px; font-weight: bold; color: #495057; border-right: 5px solid #007bff; }
         
         /* עיצוב כפתורים */
@@ -74,7 +83,7 @@
     </div>
 
     <div class="template-actions">
-        <button class="btn-save-template" onclick="saveFormData()">💾 שמור נתונים קבועים</button>
+        <button class="btn-save-template" onclick="saveFormData(false)">💾 שמור נתונים קבועים (ידני)</button>
         <button class="btn-clear" onclick="clearFormData()">🗑️ נקה</button>
     </div>
 
@@ -106,6 +115,12 @@
     <div class="input-group"><label>הודו:</label><input type="tel" id="time_hodu" class="time-input"></div>
     <div class="input-group"><label>תפילת ילדים:</label><input type="text" id="text_kids" value="תפילת ילדים לאחר מוסף."></div>
     <div class="input-group"><label>הודעה מיוחדת:</label><textarea id="special_morning" style="height:50px"></textarea></div>
+    
+    <div class="input-group checkbox-group">
+        <input type="checkbox" id="chk_kiddush">
+        <label for="chk_kiddush">הוסף קידוש למודעה</label>
+        <input type="text" id="text_kiddush" value="קידוש קהילתי לאחר התפילה">
+    </div>
 
     <div class="section-title">צהריים</div>
     <div class="input-group"><label>תהילים לילדים:</label><input type="tel" id="time_psalms" class="time-input"></div>
@@ -152,8 +167,7 @@
 
     window.onload = function() {
         const img = new Image();
-        // הקישור המעודכן שלך:
-        img.src = 'https://raw.githubusercontent.com/Yossi65/synagogue/e3026616b649e8f0f9433409444600865a1807fb/background.png'; 
+        img.src = 'https://raw.githubusercontent.com/Yossi65/synagogue/main/background.png'; 
         img.crossOrigin = "Anonymous"; 
         
         img.onload = function() {
@@ -175,7 +189,13 @@
             const data = JSON.parse(savedData);
             for (const key in data) {
                 const el = document.getElementById(key);
-                if (el) el.value = data[key];
+                if (el) {
+                    if(el.type === 'checkbox') {
+                        el.checked = data[key];
+                    } else {
+                        el.value = data[key];
+                    }
+                }
             }
         }
     };
@@ -210,20 +230,29 @@
         });
     });
 
-    function saveFormData() {
-        const inputs = document.querySelectorAll('input[type="text"], input[type="tel"], textarea, select');
+    function saveFormData(silent = false) {
         const data = {};
-        inputs.forEach(input => {
+        // שמירת כל השדות
+        document.querySelectorAll('input[type="text"], input[type="tel"], textarea, select').forEach(input => {
             if(input.id !== 'fontSizeSlider') data[input.id] = input.value;
         });
+        
+        // שמירה מיוחדת לצ'קבוקס
+        const chk = document.getElementById('chk_kiddush');
+        if(chk) data['chk_kiddush'] = chk.checked;
+
         localStorage.setItem('shabbatFormData', JSON.stringify(data));
-        alert('הנתונים נשמרו!');
+        
+        if (!silent) {
+            alert('הנתונים נשמרו בהצלחה!');
+        }
     }
 
     function clearFormData() {
         if(confirm("לנקות הכל?")) {
             document.querySelectorAll('input[type="text"], input[type="tel"], textarea').forEach(i => i.value = '');
             document.getElementById('parasha').value = '';
+            document.getElementById('chk_kiddush').checked = false;
         }
     }
 
@@ -236,13 +265,18 @@
         const ids = ['time_knisa', 'time_tzeit', 'time_mincha_eve', 'time_kabalat', 'special_eve', 
                      'time_shacharit', 'time_hodu', 'text_kids', 'special_morning', 'time_psalms', 
                      'time_class_mincha', 'time_mincha_day', 'time_women', 'time_class_arvit', 
-                     'time_arvit_motzash', 'time_week_shacharit', 'time_week_arvit'];
+                     'time_arvit_motzash', 'time_week_shacharit', 'time_week_arvit', 'text_kiddush'];
         ids.forEach(id => data[id] = document.getElementById(id).value);
+        
+        // הוספת סטטוס הקידוש
+        data.hasKiddush = document.getElementById('chk_kiddush').checked;
+
         return data;
     }
 
-    // --- הפונקציה המשודרגת לשיתוף ---
     async function shareToWhatsapp() {
+        saveFormData(true); // שמירה שקטה אוטומטית לפני ביצוע פעולה
+
         if (!loadedBgImage) { alert("אין תמונת רקע!"); return; }
         
         // 1. מייצרים תמונה (ברקע)
@@ -256,9 +290,7 @@
             if (!blob) return;
             const file = new File([blob], "shabbat_times.jpg", { type: "image/jpeg" });
             
-            // מנגנון ביטוח: העתקה לזיכרון לפני השיתוף
             try {
-                // משתמשים ב-textarea נסתר להעתקה בטוחה (עובד יותר טוב במובייל)
                 const tempInput = document.createElement("textarea");
                 tempInput.value = whatsappText;
                 document.body.appendChild(tempInput);
@@ -266,13 +298,11 @@
                 document.execCommand("copy");
                 document.body.removeChild(tempInput);
                 
-                // הודעה קופצת למשתמש
                 alert("הטקסט הועתק לזיכרון!\n\nאם הוא לא מופיע אוטומטית מתחת לתמונה - עשה 'הדבק' (Paste).");
             } catch (err) {
                 console.log("Copy failed", err);
             }
 
-            // 4. שליחה
             if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({
@@ -313,6 +343,11 @@
         if(data.text_kids) msg += `${data.text_kids}\n`;
         if(data.special_morning) msg += `${fmt(data.special_morning)}\n`;
         
+        // הוספת הקידוש אם סומן
+        if(data.hasKiddush && data.text_kiddush) {
+             msg += `${fmt(data.text_kiddush)}\n`;
+        }
+
         msg += `\n`;
         if(data.time_psalms) msg += `תהילים לילדים - ${fmt(data.time_psalms)}\n`;
         if(data.time_class_mincha) msg += `שיעור לפני מנחה - ${fmt(data.time_class_mincha)}\n`;
@@ -329,6 +364,8 @@
     }
 
     function generateText(mode) {
+        saveFormData(true); // שמירה שקטה אוטומטית
+
         currentMode = mode;
         const msg = buildTextString(mode === 'whatsapp');
 
@@ -371,6 +408,8 @@
     }
 
     function generateImage(silentMode = false) {
+        if(!silentMode) saveFormData(true); // שמירה שקטה אוטומטית, אלא אם הפונקציה נקראה מתוך השיתוף שכבר שמר
+
         if (!loadedBgImage) { if(!silentMode) alert("אין תמונת רקע!"); return; }
         const data = getFormData();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -433,6 +472,13 @@
              currentY += lineHeight * 0.2;
         }
 
+        // ציור הקידוש אם מסומן
+        if(data.hasKiddush && data.text_kiddush) {
+            currentY += lineHeight * 0.1;
+            draw(data.text_kiddush);
+            currentY += lineHeight * 0.1;
+        }
+
         if (currentY < canvas.height * 0.7) currentY += lineHeight * 0.3;
 
         draw(data.time_psalms ? `תהילים לילדים - ${data.time_psalms}` : '');
@@ -469,6 +515,7 @@
     }
 
     function downloadImage() {
+        saveFormData(true); // שמירה שקטה גם בהורדה
         const link = document.createElement('a');
         const data = getFormData();
         const fileName = `זמני_שבת_פרשת_${data.parasha.replace(/\s+/g, '_')}.jpg`;
