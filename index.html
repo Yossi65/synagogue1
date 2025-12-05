@@ -64,12 +64,16 @@
         
         .slider-container { background-color: #fff3cd; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 20px;}
         input[type=range] { width: 80%; }
+        
+        /* סימן קטן לשמירה אוטומטית */
+        .auto-save-indicator { text-align: center; font-size: 12px; color: #888; margin-top: -10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>מחולל מודעות שבת - טל חיים</h1>
+    <div class="auto-save-indicator">✨ כל שינוי נשמר אוטומטית</div>
     
     <div style="text-align:center; margin-bottom: 20px; padding: 10px; background: #e3f2fd; border-radius: 8px;">
         <p id="imageStatus">טוען תמונת רקע מהענן...</p>
@@ -83,8 +87,8 @@
     </div>
 
     <div class="template-actions">
-        <button class="btn-save-template" onclick="saveFormData(false)">💾 שמור נתונים קבועים (ידני)</button>
-        <button class="btn-clear" onclick="clearFormData()">🗑️ נקה</button>
+        <button class="btn-save-template" onclick="saveFormData(false)">💾 שמירה ידנית (לא חובה)</button>
+        <button class="btn-clear" onclick="clearFormData()">🗑️ נקה הכל</button>
     </div>
 
     <div class="input-group">
@@ -198,7 +202,23 @@
                 }
             }
         }
+        
+        // הפעלת מערכת השמירה האוטומטית בטעינה
+        setupAutoSave();
     };
+    
+    // פונקציה חדשה שמצמידה אירועי שמירה לכל שדה אפשרי
+    function setupAutoSave() {
+        // בוחר את כל סוגי הקלט: טקסט, מספר, תיבות סימון, רשימות נפתחות וכו'
+        const inputs = document.querySelectorAll('input, textarea, select');
+        
+        inputs.forEach(input => {
+            // אירוע 'input' תופס כל הקלדה בזמן אמת
+            input.addEventListener('input', () => saveFormData(true));
+            // אירוע 'change' תופס שינויים כמו בחירה ברשימה או צ'קבוקס
+            input.addEventListener('change', () => saveFormData(true));
+        });
+    }
 
     document.getElementById('bgImageInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -227,6 +247,7 @@
             else if (val.length === 3) val = "0" + val.substring(0,1) + ":" + val.substring(1);
             else if (val.length >= 4) val = val.substring(0, 2) + ":" + val.substring(2, 4);
             this.value = val;
+            saveFormData(true); // שמירה גם אחרי פירמוט השעה
         });
     });
 
@@ -253,6 +274,7 @@
             document.querySelectorAll('input[type="text"], input[type="tel"], textarea').forEach(i => i.value = '');
             document.getElementById('parasha').value = '';
             document.getElementById('chk_kiddush').checked = false;
+            saveFormData(true); // שמירה של הניקוי
         }
     }
 
